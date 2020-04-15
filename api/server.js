@@ -44,4 +44,33 @@ server.get('/cars/:id', (req, res) => {
         });
   });
 
+  server.put('/cars/:id', (req, res) => {
+    db('cars')
+    .where({ id: req.params.id })
+    .update(req.body)
+    .then((count) => {
+        if (count) {
+            res.json({ updated: count });
+        } else {
+            res.status(404).json({ message: 'Car not found, cannot update'});
+        }
+    })
+    .catch((error) => {
+        res.status(500).json({ message: 'Server Error', error })
+    });
+  });
+
+  server.delete('/cars/:id', (req, res) => {
+    db('cars')
+        .where({ id: req.params.id })
+        .del()
+        .then((car) => {
+            if (car) {
+                res.status(200).json({ data: car });
+            } else {
+                res.status(500).json({ message: 'Server Error, car cannot be deleted'})
+            }
+        });
+  });
+
 module.exports = server;
